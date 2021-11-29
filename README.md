@@ -9,6 +9,7 @@ Simple tracking pixel written in php.
 - cleaning old logs.
 - send custome post request.
 - set custome option.
+- add additional text/informations.
 
 # Installation
 - Copy the code in your ftp folder. (Ready to use. :) )
@@ -17,8 +18,19 @@ Simple tracking pixel written in php.
   
   
 # Using
-  - Only using the tracking pixel.
-  - <code> <img src="https://idenlink.de/tracking_pixel/php-tracking-pixel/tracking_pixel.php" > </code>
+  - Only using the tracking pixel:
+  - <img src="https://<your-domain-folder>/tracking_pixel.php" >
+  - Make a redirecting to annoter website:
+  - https://<your-domain-folder>/tracking_pixel.php?re=https://earcandle.de/
+  - Replace image:
+  - https://<your-domain-folder>/tracking_pixel.php?ri=https://cs-digital-ug.de/images/logo.png
+  - <img src="https://<your-domain-folder>/tracking_pixel.php?ri=https://cs-digital-ug.de/images/logo.png" >
+  - Write the additional informations:
+  - https://<your-domain-folder>/tracking_pixel.php?ai=Heyho
+  - <img src="https://<your-domain-folder>/tracking_pixel.php?ai=Heyho" >
+  - Send email by pixel call: (EMAIL is coded im base64, like test@test.com -> dGVzdEB0ZXN0LmNvbQ== -- En and Decoder:https://www.base64decode.org/)
+  - https://<your-domain-folder>.de/tracking_pixel/php-tracking-pixel/tracking_pixel.php?em=dGVzdEB0ZXN0LmNvbQ
+  
   
   
 # Thank me
