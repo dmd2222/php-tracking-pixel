@@ -492,6 +492,8 @@ function send_post_request($url = "https://cs-digital-ug.de/data_donation.php",$
                 return $result;
             }
 
+	}catch{
+		
 	}
 
 }
