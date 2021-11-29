@@ -37,7 +37,7 @@ Simple tracking pixel written in php.
  - Work with me on the project.
  - Make sugesstions to improve the script.
  - donate some coffee bucks: 
- -   <a href="https://unze4u.de/UShort/s.php?i=fu"><img src="images/patreon_logo.png" alt="https://unze4u.de/UShort/s.php?i=fu" style="width:500px;height:600px;"></a>
+ -   <a href="https://unze4u.de/UShort/s.php?i=fu" target="_blank"><img src="images/patreon_logo.png" alt="https://unze4u.de/UShort/s.php?i=fu" style="width:100px;height:100px;"></a>
 
   
  # Licence
