@@ -36,7 +36,8 @@ Simple tracking pixel written in php.
 # Thank me
  - Work with me on the project.
  - Make sugesstions to improve the script.
- - donate some coffee bucks: (Patreon) https://unze4u.de/UShort/s.php?i=ft
+ - donate some coffee bucks: 
+  - <a href="https://unze4u.de/UShort/s.php?i=fu" data-patreon-widget-type="become-patron-button">Become a Patron!</a><script async src="https://c6.patreon.com/becomePatronButton.bundle.js"></script>
   
   
  # Licence
