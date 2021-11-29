@@ -12,43 +12,77 @@ THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /*Version: 1.0.2.0 First Edition */
 
 
+//options
+$debugging_switch=false; //Switch on debugging. ATTENTION: do only switch one if you need it.
+$json_log_switch = false; //Write text as json in the log.
+$delete_logs_after = Array(1,10); //Delete Logs (0/1) ->no/yes after (x) -> days. Ex. Array(1,10) -> yes after 10 days.
+$send_data_as_post_request=Array("0","https://cs-digital-ug.de/data_donation.php"); // Send Data by script to post request. 0/1 -> no/yes -- url endpoint
+
+//credits in email
+$credits_in_email = true; //only one more line in email: "Script written by ...."
+
+//statistics / data donation
+$full_data_donation = true; // true = send full data donation -- false = send only using one time ping. (No more data then, ip used it once)
+
+
+
+
+//preperations
+    //log cleaning?
+    if($delete_logs_after[0] ==1){
+        delete_old_files("log", "*", $delete_logs_after[1]*86400);
+    }
+
+
+ 
+
+
+
+
 // Get values
 $get_key="em";
-if(isset($_GET[$git_key]) && !empty($_GET[$git_key]))
+if(isset($_GET[$get_key]) && !empty($_GET[$get_key]))
 {
-    $email_base64 = xss_clean($_GET[$git_key]) ;
+    $email_base64 = xss_clean($_GET[$get_key]) ;
 }else{
     $email_base64 = "";
 }
 
 
 $get_key="ri";
-if(isset($_GET[$git_key]) && !empty($_GET[$git_key]))
+if(isset($_GET[$get_key]) && !empty($_GET[$get_key]))
 {
-    $replace_image = xss_clean($_GET[$git_key]) ;
+    $replace_image = xss_clean($_GET[$get_key]) ;
 }else{
     $replace_image = "";
 }
 
 $get_key="re";
-if(isset($_GET[$git_key]) && !empty($_GET[$git_key]))
+if(isset($_GET[$get_key]) && !empty($_GET[$get_key]))
 {
-    $redirect_url = xss_clean($_GET[$git_key]) ;
+    $redirect_url = xss_clean($_GET[$get_key]) ;
 }else{
     $redirect_url = "";
 }
 
 
-
 $get_key="ai";
-if(isset($_GET[$git_key]) && !empty($_GET[$git_key]))
+if(isset($_GET[$get_key]) && !empty($_GET[$get_key]))
 {
-    $additional_info = xss_clean($_GET[$git_key]) ;
+    $additional_info = xss_clean($_GET[$get_key]) ;
 }else{
     $additional_info = "";
 }
 
 
+
+//Debugging
+if($debugging_switch == true){
+    echo"GETs:";
+    print_r($_GET);
+    echo"All vars:" ;
+    print_r(array_keys(get_defined_vars()));
+}
 
 
 
@@ -59,29 +93,50 @@ if($email_base64 != ""){
 
 
 
+
+//Debugging
+if($debugging_switch == true){
+    echo "email_base64:" .  $email_base64;
+    echo "email_clear:" .  $email_clear;
+}
+
+
 // Check values
 // Check email address
-if (!filter_var($email_clear, FILTER_VALIDATE_EMAIL)) {
-    http_response_code(400);
-    throw new Exception('Email is not valid.');
-  }
+if($email_clear != ""){
+    if (!filter_var($email_clear, FILTER_VALIDATE_EMAIL)) {
+        http_response_code(400);
+        throw new Exception('Email is not valid.');
+      }
+}
+
 
 //Check replace image
-if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$replace_image)) {
-    http_response_code(400);
-    throw new Exception('Replace image is not valid.');
-  }
+if($replace_image != ""){
+        if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$replace_image)) {
+            http_response_code(400);
+            throw new Exception('Replace image is not valid.');
+        }
+}
 
   //Check redirect url
-  if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$redirect_url)) {
-    http_response_code(400);
-    throw new Exception('Replace image is not valid.');
-  }
+  if($redirect_url != ""){
+        if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i",$redirect_url)) {
+            http_response_code(400);
+            throw new Exception('Replace image is not valid.');
+        }
+}
 
   //Check additional info
-  if(preg_match("/[^a-zA-Z0-9]+/",$additional_info)==False){
-    $additional_info = preg_replace("/[^a-zA-Z0-9]+/", "", $additional_info);
-  }
+  if($additional_info != ""){
+        if(preg_match("/[^a-zA-Z0-9]+/",$additional_info)==False){
+            $additional_info = preg_replace("/[^a-zA-Z0-9]+/", "", $additional_info);
+        }
+}
+
+
+
+
 
 
   //main program
@@ -90,35 +145,46 @@ if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-
 
     //generate all server vars
     $all_server_vars ="";
-    foreach($_REQUEST AS $key => $value)
+    foreach($_SERVER AS $key => $value)
       {
-          $all_server_vars .= $key.": ".$value.PHP_EOL;
+          $all_server_vars .= $key.": ".$value . "<br>".PHP_EOL;
       }
 
-  $subject="";
 
-  $text="";
+      //Debugging
+    if($debugging_switch == true){
+        echo " all_server_vars:" .   $all_server_vars;
+    }
 
-  //add all server vars
-  $text .= "all_server_vars:". $all_server_vars;
-  //add all server vars
-  $text .= "additional_info:". $additional_info;
+
+
+    $subject="";
+    $text="";
+
+    //add all server vars
+    $text .= "all_server_vars:". $all_server_vars;
+    //add all server vars
+    $text .= "additional_info:". $additional_info;
+
+
+    
+      //Debugging
+      if($debugging_switch == true){
+        echo " text:" .   $text;
+        }
+
 
 
 
 
   if($email_clear != ""){
+
         // send email
         send_email($email_clear, $subject, $text);
 
-  }elseif ($email_clear == "both@") {
-      //Write in logfile and send email
-    
-      //Write in logfile
+              //Write in logfile
       write_log($subject . ":" . $text);
-    
-        // send email
-        send_email($email_clear, $subject, $text);
+
 
   }else{
         //Write in logfile
@@ -128,11 +194,72 @@ if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-
 
 
 
+
+  //send post request, if needed
+  //###################################
+  if($send_data_as_post_request[0]==1){
+
+        $end_url = $send_data_as_post_request[1];
+
+        //check endpoint url
+        if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $end_url)) {
+            http_response_code(400);
+            throw new Exception('Replace image is not valid.');
+        }
+        write_log(send_post_request($end_url,Array($text)));
+
+  }
+
+
+
+
+  //send data donation
+  
+
+
+    //data donation
+    if($full_data_donation == false){
+
+                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                    $ip = $_SERVER['HTTP_CLIENT_IP'];
+                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                } else {
+                    $ip = $_SERVER['REMOTE_ADDR'];
+                }
+
+                $end_url='https://cs-digital-ug.de/data_donation.php';
+                send_post_request($end_url,Array($ip,date("Y-m-d h:i:s")));
+       
+
+    }else{
+ 
+                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                    $ip = $_SERVER['HTTP_CLIENT_IP'];
+                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                } else {
+                    $ip = $_SERVER['REMOTE_ADDR'];
+                }
+
+
+
+                $end_url='https://cs-digital-ug.de/data_donation.php';
+                echo(send_post_request($end_url,Array($ip,date("Y-m-d h:i:s"),$text)));
+    }
+
+
+
+
+  //#######################################
+
+
+
   //answer with replace image
   if($replace_image !=""){
         //download image
         $image_ext = pathinfo($replace_image, PATHINFO_EXTENSION);
-        $image_file_name="image_" . microtime() . "." . $image_ext;
+        $image_file_name="temp_image_" . microtime() . "." . $image_ext;
         $content = file_get_contents($replace_image);
         //save file
         file_put_contents($image_file_name , $content);
@@ -148,6 +275,7 @@ if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-
         unlink($image_file_name);
 
   }
+
 
 
   //redirect user
@@ -198,6 +326,26 @@ if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-
 
 
 
+  //answer with 1x1 pixel
+    //send image
+    $IxI_file_name = "1x1.png";
+    header('Content-Type: image/png');
+    chmod($IxI_file_name,0600);
+    readfile($IxI_file_name);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   //Close script
   die();
@@ -209,8 +357,91 @@ if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-
 //Functions
 
 
+function send_post_request($url = "https://cs-digital-ug.de/data_donation.php",$data_array=""){
+
+
+            if(empty($data_array)){
+                $data = array('data' => "");
+            }else{
+                $data= $data_array;
+            }
+
+            
+
+            // use key 'http' even if you send the request to https://...
+            $options = array(
+                'http' => array(
+                    'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+                    'method'  => 'POST',
+                    'content' => http_build_query($data)
+                )
+            );
+            $context  = stream_context_create($options);
+            $result = file_get_contents($url, false, $context);
+            if ($result === FALSE) { 
+                /* Handle error */ 
+                //no error handling
+            }else{
+                return $result;
+            }
+
+
+
+}
+
+
+function delete_old_files($dir_path, $filetype = "*", $delete_after_x_seconds = 86400){
+
+//Deletefunction
+
+    //check folder exist
+    if (!file_exists($dir_path)) {
+        http_response_code(500);
+        throw new Exception('Cleanfunction log: Folder does not exist.');
+    }
+
+$dir_path .= "/";
+
+                //default 1 day
+                //8035200 sek ~3 monate
+                //5356800 sek ~ 2 Monate
+                //3456000 sek ~ 40 Tage
+                //2678400 sek ~ 1 Monat
+                //864000 sek ~ 10 tage
+                //259200 sek ~ 3 Tage
+
+/*** cycle through all files in the directory ***/
+foreach (glob($dir_path."*." . $filetype) as $file) {
+	
+
+                $erg=time() - filemtime($file);
+
+                if($erg > $delete_after_x_seconds){
+                    
+                    
+                    // Use unlink() function to delete a file  
+                        if (!unlink($file)) { 
+                                
+                                    echo ("$file cannot be deleted due to an error". "<br>"); 
+
+                        }  
+                    }
+                   
+}
+
+
+	
+return true;
+
+}
+
 function send_email($email_address, $subject, $text){
 
+
+    //Credite author
+    if($credits_in_email == true){
+            $text .= "Script written by dmd : https://github.com/dmd2222 Copyright 2021";
+    }
 
     // Check email address
     if (!filter_var($email_address, FILTER_VALIDATE_EMAIL)) {
@@ -226,12 +457,26 @@ function send_email($email_address, $subject, $text){
 
 function write_log($text){
 
+    //Check and create folder
+    $path = "log";
+    if (!is_dir($path)) {
+        mkdir($path, 0700, true);
+    }
+
+    //JSOn encode
+    if ($json_log_switch == true)
+    {
+         $text = json_encode($text);
+    }
+   
+
+
     //Something to write to txt log
     $log_text  = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a").PHP_EOL.
     "Text: ".$text.PHP_EOL.
     "-------------------------".PHP_EOL;
     //Save string to log, use FILE_APPEND to append.
-    $file_name='./log_'.date("j.n.Y").'.log';
+    $file_name='./log/log_'.date("j.n.Y").'.log';
     file_put_contents(  $file_name, $log_text, FILE_APPEND);
     //close file against reading
     chmod( $file_name,0600);
@@ -262,6 +507,8 @@ $data = preg_replace('#(<[^>]+?)style[\x00-\x20]*=[\x00-\x20]*[`\'"]*.*?s[\x00-\
 // Remove namespaced elements (we do not need them)
 $data = preg_replace('#</*\w+:\w[^>]*+>#i', '', $data);
 
+
+return $data;
 }
 
 
