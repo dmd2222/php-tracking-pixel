@@ -42,10 +42,7 @@ Simple tracking pixel written in php.
   - <a href="https://unze4u.de/UShort/s.php?i=fv" target="_blank">PAYPAL </a>
   - LTC(Litcoin):  MLZ3ZDsWd2v5KPq8dVMZWbbsuH3xxZbgh5
   - You dont have Litecoin:
-  <div id="iframe-widget-wrapper" style="height: 205px">
-      <iframe id='iframe-widget' src='https://changenow.io/embeds/exchange-widget/v2/widget.html?FAQ=true&amount=0.1&from=btc&horizontal=true&lang=en-US&link_id=c77b807c7e1b74&locales=true&logo=true&to=ltc' style="height: 455px; width: 100%; border: none"></iframe>
-      <script defer type='text/javascript' src='https://changenow.io/embeds/exchange-widget/v2/stepper-connector.js'></script>
-    </div>
+
 
   
  # Licence
