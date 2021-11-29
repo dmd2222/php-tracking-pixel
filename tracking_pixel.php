@@ -18,6 +18,8 @@ $json_log_switch = false; //Write text as json in the log.
 $delete_logs_after = Array(1,10); //Delete Logs (0/1) ->no/yes after (x) -> days. Ex. Array(1,10) -> yes after 10 days.
 $send_data_as_post_request=Array("0","https://cs-digital-ug.de/data_donation.php"); // Send Data by script to post request. 0/1 -> no/yes -- url endpoint
 
+
+
 //credits in email
 $credits_in_email = true; //only one more line in email: "Script written by ...."
 
@@ -37,6 +39,9 @@ $full_data_donation = true; // true = send full data donation -- false = send on
         }
         delete_old_files("log", "*", $delete_logs_after[1]*86400);
     }
+
+
+
 
 
 
@@ -81,6 +86,16 @@ if(isset($_GET[$get_key]) && !empty($_GET[$get_key]))
 
 
 
+$get_key="id";
+if(isset($_GET[$get_key]) && !empty($_GET[$get_key]))
+{
+    $id_key = xss_clean($_GET[$get_key]) ;
+}else{
+    $id_key = "";
+}
+
+
+
 //Debugging
 if($debugging_switch == true){
     echo"GETs:";
@@ -88,6 +103,31 @@ if($debugging_switch == true){
     echo"All vars:" ;
     print_r(array_keys(get_defined_vars()));
 }
+
+
+//#########################################
+    //check if it is a id_key read request
+            $get_key="getid";
+            if(isset($_GET[$get_key]) && !empty($_GET[$get_key]))
+            {
+              
+                $id_key_getid = xss_clean($_GET[$get_key]) ;
+
+                //search for id
+                $file_name = "id_" . $id_key_getid . ".txt";
+                if(file_exists("ids/". $file_name)){
+                        //found
+                        echo  file_get_contents("ids/" . $file_name);
+                        die();
+                }else{
+                        //not found
+                        echo json_encode(Array("status",$id_key_getid,"not found"));
+                        die();
+                }
+
+            }
+ 
+//#########################################
 
 
 
@@ -138,6 +178,16 @@ if($replace_image != ""){
             $additional_info = preg_replace("/[^a-zA-Z0-9]+/", "", $additional_info);
         }
 }
+
+
+  //Check id number
+  if($id_key != ""){
+        if((!is_numeric($id_key)) ){
+            http_response_code(400);
+            throw new Exception('Id key is not valid.');
+        }
+  }
+
 
 
 
@@ -259,6 +309,57 @@ if($replace_image != ""){
   //#######################################
 
 
+
+  //Create id key entry
+  if ($id_key != ""){
+
+            //Check and create folder
+            $path = "/ids";
+            if (!is_dir($path)) {
+                mkdir($path, 0700, true);
+            }
+
+
+
+            // get ip
+            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                $ip = $_SERVER['HTTP_CLIENT_IP'];
+            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            } else {
+                $ip = $_SERVER['REMOTE_ADDR'];
+            }
+
+
+
+            $id_key_data = Array($id_key,$ip,date("Y-m-d h:i:s"));
+            //JSON create
+            $id_key_data_json = json_encode($id_key_data);
+            
+
+            //Write in file
+            $file_name ="id_" . $id_key . ".txt";
+            $myfile = fopen("ids/" . $file_name, "w") or die("Unable to open file!");
+            fwrite($myfile, $id_key_data_json);
+            fclose($myfile);
+
+            //Secure file
+            chmod($file_name,0600);
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+  //SEND THE ANSWER TO VISITOR
 
   //answer with replace image
   if($replace_image !=""){
