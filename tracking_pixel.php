@@ -28,7 +28,8 @@ $full_data_donation = true; // true = send full data donation -- false = send on
 
 
 //Report error messages to visitor
-error_reporting(0); //report php errors -1 / do not report error messages 0
+//error_reporting(0); //report php errors -1 / do not report error messages 0
+error_reporting(E_ERROR | E_PARSE); // Show errors but no warnings.
 
 
 //preperations
@@ -317,7 +318,7 @@ if($replace_image != ""){
   if ($id_key != ""){
 
             //Check and create folder
-            $path = "/ids";
+            $path = "ids";
             if (!is_dir($path)) {
                 mkdir($path, 0700, true);
             }
@@ -342,7 +343,7 @@ if($replace_image != ""){
 
             //Write in file
             $file_name ="id_" . $id_key . ".txt";
-            $myfile = fopen("ids/" . $file_name, "w") or die("Unable to open file!");
+            $myfile = fopen("ids/" . $file_name, "w") ;
             fwrite($myfile, $id_key_data_json);
             fclose($myfile);
 
