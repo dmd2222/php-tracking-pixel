@@ -27,6 +27,9 @@ $credits_in_email = true; //only one more line in email: "Script written by ....
 $full_data_donation = true; // true = send full data donation -- false = send only using one time ping. (No more data then, ip used it once)
 
 
+//Report error messages to visitor
+error_reporting(0); //report php errors -1 / do not report error messages 0
+
 
 //preperations
     //log cleaning?
