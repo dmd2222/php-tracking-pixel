@@ -220,10 +220,11 @@ if($replace_image != ""){
     $subject="";
     $text="";
 
+    //add addition info string
+    $text .= "additional_info:". $additional_info;
     //add all server vars
     $text .= "all_server_vars:". $all_server_vars;
-    //add all server vars
-    $text .= "additional_info:". $additional_info;
+
 
 
     
