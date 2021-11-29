@@ -11,6 +11,7 @@ Simple tracking pixel written in php.
 - set custome option.
 
 # Installation
+- Copy the code in your ftp folder. (Ready to use. :) )
 - <code> git clone https://github.com/dmd2222/php-tracking-pixel.git <code>
 - Optional: change options in the beginning of the main file.
   
