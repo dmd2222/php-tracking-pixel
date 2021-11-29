@@ -10,6 +10,8 @@ Simple tracking pixel written in php.
 - send custome post request.
 - set custome option.
 - add additional text/informations.
+- set custom id key
+- read status of key
 
 # Installation
 - Copy the code in your ftp folder. (Ready to use. :) )
@@ -30,6 +32,10 @@ Simple tracking pixel written in php.
   - <img src="https://your-domain-folder/tracking_pixel.php?ai=Heyho" >
   - Send email by pixel call: (EMAIL is coded im base64, like test@test.com -> dGVzdEB0ZXN0LmNvbQ== -- En and Decoder:https://www.base64decode.org/)
   - https://your-domain-folder/tracking_pixel/php-tracking-pixel/tracking_pixel.php?em=dGVzdEB0ZXN0LmNvbQ
+  - Set custom key:
+  - https://your-domain-folder/tracking_pixel/php-tracking-pixel/tracking_pixel.php?id=999
+  - Get status of key 999:
+  - https://your-domain-folder/tracking_pixel/php-tracking-pixel/tracking_pixel.php?getid=999
   
   
   
