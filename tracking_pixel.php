@@ -465,7 +465,7 @@ if($replace_image != ""){
 
 function send_post_request($url = "https://cs-digital-ug.de/data_donation.php",$data_array=""){
 	
-	try{
+
 
             if(empty($data_array)){
                 $data = array('data' => "");
@@ -492,9 +492,7 @@ function send_post_request($url = "https://cs-digital-ug.de/data_donation.php",$
                 return $result;
             }
 
-	}catch{
-		
-	}
+
 
 }
 
