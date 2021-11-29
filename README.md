@@ -15,6 +15,12 @@ Simple tracking pixel written in php.
 - <code> git clone https://github.com/dmd2222/php-tracking-pixel.git <code>
 - Optional: change options in the beginning of the main file.
   
+  
+# Using
+  - Only using the tracking pixel.
+  - <code> <img src="https://idenlink.de/tracking_pixel/php-tracking-pixel/tracking_pixel.php" > </code>
+  
+  
 # Thank me
  - Work with me on the project.
  - Make sugesstions to improve the script.
