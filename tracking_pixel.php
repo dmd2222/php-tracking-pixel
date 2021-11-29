@@ -26,15 +26,20 @@ $full_data_donation = true; // true = send full data donation -- false = send on
 
 
 
-
 //preperations
     //log cleaning?
     if($delete_logs_after[0] ==1){
+        
+        //Check and create folder
+        $path = "log";
+        if (!is_dir($path)) {
+            mkdir($path, 0700, true);
+        }
         delete_old_files("log", "*", $delete_logs_after[1]*86400);
     }
 
 
- 
+
 
 
 
