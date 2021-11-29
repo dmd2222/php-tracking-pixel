@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule \.jpg$ tracking_pixel.php [L]
